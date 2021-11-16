@@ -140,4 +140,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorManager.registerListener((SensorEventListener) this,sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
 
     }
+
+    /**
+     * the onStop method is overridden to unregister our sensor listener
+     */
+    @Override
+    protected void onStop(){
+        super.onStop();
+        sensorManager.unregisterListener(this);
+    }
 }
