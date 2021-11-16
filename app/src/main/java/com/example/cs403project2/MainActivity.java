@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         pbLight.setProgress((int) light);
         strLight = "Light: " + ((int) light);
         pctLight = (int)((light/ MAX_LIGHT_VALUE) * 100); //change light to a percentage
+        //this condition sets the pctg to 1 if light is greater than 0 and the light value is less
+        //than a hundredth of the max value (for aesthetic purposes)
+        if (pctLight == 0 && light > 0)
+            pctLight = 1;
         strLight = strLight + ", " + pctLight + "%";
         txtLight.setText(strLight);
     }
