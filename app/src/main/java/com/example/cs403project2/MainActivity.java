@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -30,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SensorManager sensorManager;
     Sensor sensor_light;
     float light; //simply holds the reported reading from the light sensor
-    int MAX_LIGHT_VALUE = 3000; //cap for actionable range of light value (0-this val)
+    int MAX_LIGHT_VALUE = 1000; //cap for actionable range of light value (0-this val)
+    String light_Type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 light = MAX_LIGHT_VALUE;
                 setLightUIElements();
             }
+            setLightType();
         }
+    }
+
+    /**
+     * this method gets the ratio of light to max_light_value and sets the light_Type
+     * to a corresponding string.
+     */
+    public void setLightType(){
+        double lightRatio = light / MAX_LIGHT_VALUE;
+        if (lightRatio < 0.25)
+            light_Type = "dark";
+        else if (lightRatio < 0.5)
+            light_Type = "ambient";
+        else
+            light_Type = "bright";
     }
 
     /**
