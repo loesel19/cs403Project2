@@ -11,6 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cs403Project2">
         <activity
+            android:name=".Story"
+            android:exported="true" />
+        <activity
+            android:name=".Settings"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
