@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SensorManager sensorManager;
     Sensor sensor_light;
     float light; //simply holds the reported reading from the light sensor
-    int MAX_LIGHT_VALUE = 1000; //cap for actionable range of light value (0-this val)
+    int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
     String light_Type;
 
     @Override
@@ -65,17 +65,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * @param event
      */
     @Override
-    public void onSensorChanged(SensorEvent event){
-        if (event.sensor.getType() == Sensor.TYPE_LIGHT){
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             light = event.values[0];
 
-            if (light < MAX_LIGHT_VALUE){
-               setLightUIElements();
-            }else{
+            if (light > MAX_LIGHT_VALUE)
                 light = MAX_LIGHT_VALUE;
-                setLightUIElements();
-            }
             setLightType();
+            setLightUIElements();
+
         }
     }
 
@@ -85,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     public void setLightType(){
         double lightRatio = light / MAX_LIGHT_VALUE;
-        if (lightRatio < 0.25)
+        if (lightRatio < 0.1)
             light_Type = "dark";
-        else if (lightRatio < 0.5)
+        else if (lightRatio < 0.25)
             light_Type = "ambient";
         else
             light_Type = "bright";
@@ -109,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (pctLight == 0 && light > 0)
             pctLight = 1;
         strLight = strLight + ", " + pctLight + "%";
+        strLight = strLight + ", " + light_Type;
         txtLight.setText(strLight);
     }
 
