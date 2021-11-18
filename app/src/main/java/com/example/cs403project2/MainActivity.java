@@ -29,19 +29,14 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-
-
-public class MainActivity extends AppCompatActivity implements SensorEventListener{
+public class MainActivity extends AppCompatActivity{
     //Activity Scope View/Object declaration
     TextView txtLight;
     ProgressBar pbLight;
-    SensorManager sensorManager;
-    Sensor sensor_light;
-    float light; //simply holds the reported reading from the light sensor
-    int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
-    String light_Type;
+    LightSensorObject lightSensorObject; //object implementing sensorEventListener Interface
     String category; //category of the story that's going to be displayed in StoryActivity
 
     @Override
@@ -50,17 +45,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         txtLight = findViewById(R.id.txtLight);
         pbLight = findViewById(R.id.pbLight);
-        checkPermissions();
-        sensorInit();
+        boolean allow = checkPermissions();
+        if (allow) {
+            lightSensorObject = new LightSensorObject();
 
-        //stories manager object is to organize all of the stories, categories, etc. into one class
-        StoriesManager storiesManager = new StoriesManager();
+            //stories manager object is to organize all of the stories, categories, etc. into one class
+            StoriesManager storiesManager = new StoriesManager();
 
-        //use shared preferences to get the category of stories that the user needs right now
-        SharedPreferences pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
-        //for example, it is bright outside
-        category = pref.getString("bright", "dark");
-
+            //use shared preferences to get the category of stories that the user needs right now
+            SharedPreferences pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
+            //for example, it is bright outside
+            category = pref.getString("bright", "dark");
+        }else
+            Toast.makeText(this, "No Stories For You :(",Toast.LENGTH_LONG).show();
     }
 
     public void launchSettings(View view) {
@@ -84,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /**
      * this method asks the user for permission to use the sensors
      */
-    public void checkPermissions(){
+    public boolean checkPermissions(){
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) ==
                 PackageManager.PERMISSION_DENIED){
@@ -92,40 +89,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             requestPermissions(new
                     String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 1);
         }
+        //check permission
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACTIVITY_RECOGNITION) ==
+                PackageManager.PERMISSION_DENIED)
+            return false;
+        else
+            return true;
     }
 
 
-    /**
-     * override method for SensorEventListener
-     * in this method we can grab the light value from the light sensor, and then
-     * call a method to change our ui based on that value
-     * @param event
-     */
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-            light = event.values[0];
 
-            if (light > MAX_LIGHT_VALUE)
-                light = MAX_LIGHT_VALUE;
-            setLightType();
-            setLightUIElements();
-
-        }
-    }
 
     /**
      * this method gets the ratio of light to max_light_value and sets the light_Type
      * to a corresponding string.
      */
     public void setLightType(){
-        double lightRatio = light / MAX_LIGHT_VALUE;
+        int light = lightSensorObject.getLight();
+        double lightRatio =  light/ lightSensorObject.getMAX_LIGHT_VALUE();
         if (lightRatio < 0.1)
-            light_Type = "dark";
+            lightSensorObject.setLight_Type("dark");
         else if (lightRatio < 0.25)
-            light_Type = "ambient";
+            lightSensorObject.setLight_Type("ambient");
         else
-            light_Type = "bright";
+            lightSensorObject.setLight_Type("bright");
+
     }
 
     /**
@@ -134,37 +123,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * percentage out of the MAX_LIGHT_VALUE. This method also sets the progress bar
      */
     public void setLightUIElements(){
+        int light = lightSensorObject.getLight();
         String strLight = "";
         int pctLight; //percentage of light / MAX_VALUE
         pbLight.setProgress((int) light);
-        pctLight = (int)((light/ MAX_LIGHT_VALUE) * 100); //change light to a percentage
+        pctLight = (int)((light/ lightSensorObject.getMAX_LIGHT_VALUE()) * 100); //change light to a percentage
         //this condition sets the pctg to 1 if light is greater than 0 and the light value is less
         //than a hundredth of the max value (for aesthetic purposes)
         if (pctLight == 0 && light > 0)
             pctLight = 1;
         strLight =  "Light: " + pctLight + "%";
-        strLight = strLight + ", " + light_Type;
+        strLight = strLight + ", " + lightSensorObject.getLight_Type();
         txtLight.setText(strLight);
     }
 
-    /**
-     * override method for SensorEventListener ... we do not care about this for our application
-     * @param sensor
-     * @param accuracy
-     */
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy){
 
-    }
 
-    /**
-     * this is a simple method which gives handles to the sensor manager and the devices
-     * light sensor.
-     */
-    public void sensorInit(){
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor_light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-    }
 
     /**
      * the onStart method is overridden to register a listener for the light sensor
@@ -172,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onStart(){
         super.onStart();
-        sensorManager.registerListener((SensorEventListener) this,sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
+        lightSensorObject.sensorManager.registerListener(lightSensorObject, lightSensorObject.sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 
@@ -182,6 +156,69 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onStop(){
         super.onStop();
-        sensorManager.unregisterListener(this);
+        lightSensorObject.sensorManager.unregisterListener(lightSensorObject);
+    }
+    class LightSensorObject implements SensorEventListener{
+        SensorManager sensorManager;
+        Sensor sensor_light;
+        float light; //simply holds the reported reading from the light sensor
+        int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
+        String light_Type;
+        public LightSensorObject(){
+            sensorInit();
+        }
+
+        /**
+         * this is a simple method which gives handles to the sensor manager and the devices
+         * light sensor.
+         */
+        public void sensorInit(){
+            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            sensor_light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        }
+
+        /**
+         * override method for SensorEventListener
+         * in this method we can grab the light value from the light sensor, and then
+         * call a method to change our ui based on that value
+         * @param event
+         */
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                light = event.values[0];
+
+                if (light > MAX_LIGHT_VALUE)
+                    light = MAX_LIGHT_VALUE;
+                setLightType();
+                setLightUIElements();
+
+            }
+        }
+
+        /**
+         * override method for SensorEventListener ... we do not care about this for our application
+         * @param sensor
+         * @param accuracy
+         */
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy){
+
+        }
+        /**
+         * getter methods for private instance variables
+         */
+        public int getLight(){
+            return (int) light;
+        }
+        public int getMAX_LIGHT_VALUE(){
+            return MAX_LIGHT_VALUE;
+        }
+        public void setLight_Type(String light_type){
+            this.light_Type = light_type;
+        }
+        public String getLight_Type(){
+            return light_Type;
+        }
     }
 }
