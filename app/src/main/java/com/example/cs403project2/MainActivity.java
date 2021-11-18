@@ -12,10 +12,6 @@ package com.example.cs403project2;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -27,7 +23,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
     //Activity Scope View/Object declaration
@@ -152,15 +147,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onStop(){
         super.onStop();
         sensorManager.unregisterListener(this);
-    }
-
-    public void launchSettings(View view) {
-        Intent intent = new Intent(this, Settings.class);
-        startActivity(intent);
-    }
-
-    public void launchStory(View view) {
-        Intent intent = new Intent(this, Story.class);
-        startActivity(intent);
     }
 }
