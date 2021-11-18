@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
+    String category; //category of the story that's going to be displayed in StoryActivity
 
     final static String TAG = "weather";
     private double lat;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         //use shared preferences to get the category of stories that the user needs right now
         SharedPreferences pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
         //for example, it is bright outside
-        String category = pref.getString("bright", "dark");
+        category = pref.getString("bright", "dark");
 
 
         RequestSingleton.getInstance(this).addToRequestQueue(requestObj(43.62,-83.92));
@@ -43,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchStory(View view) {
         Intent intent = new Intent(this, StoryActivity.class);
+        startActivity(intent);
+    }
+
+    public void shareApp(View view){
+        //this creates an implicit intent to share this app via a sms
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
+        intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
         startActivity(intent);
     }
 
