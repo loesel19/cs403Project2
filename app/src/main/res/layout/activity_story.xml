@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFACC"
     tools:context=".Story">
 
     <Button
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="32dp"
+        android:backgroundTint="#9A600B"
         android:onClick="back"
         android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
