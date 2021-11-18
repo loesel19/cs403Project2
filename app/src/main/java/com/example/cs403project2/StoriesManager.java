@@ -7,10 +7,12 @@ public class StoriesManager {
     static ArrayList<String> storyCategories;
 
     public StoriesManager() {
+        stories = new ArrayList<>();
+        storyCategories = new ArrayList<>();
         //add the story categories here
         storyCategories.add("Horror");
         storyCategories.add("Adventure");
-        storyCategories.add("Poetry?");
+        storyCategories.add("Poetry");
         storyCategories.add("Something?");
     }
 
@@ -22,7 +24,7 @@ public class StoriesManager {
 
     }
 
-    public static ArrayList<String> getStoryCategories() {
+    public ArrayList<String> getStoryCategories() {
         return storyCategories;
     }
 }
