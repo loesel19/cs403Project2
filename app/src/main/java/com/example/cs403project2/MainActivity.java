@@ -12,6 +12,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //stories manager object is to organize all of the stories, categories, etc. into one class
+        StoriesManager storiesManager = new StoriesManager();
+
     }
 
     public void launchSettings(View view) {
@@ -20,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchStory(View view) {
-        Intent intent = new Intent(this, Story.class);
+        Intent intent = new Intent(this, StoryActivity.class);
         startActivity(intent);
     }
 }
