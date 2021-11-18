@@ -1,21 +1,14 @@
 package com.example.cs403project2;
 
-import androidx.appcompat.app.AppCompatActivity;
+public class Story {
+    private String category;
+    private String text;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
-
-public class Story extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_story);
+    //adri, feel free to modify this class however you need. i just needed a framework
+    // of storiesmanager to store the storycategories somewhere -beata
+    public Story(String category, String text) {
+        this.category = category;
+        this.text = text;
     }
 
-    public void back(View view) {
-        finish();
-    }
 }
