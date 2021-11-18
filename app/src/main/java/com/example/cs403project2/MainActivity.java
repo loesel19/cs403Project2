@@ -12,6 +12,12 @@ package com.example.cs403project2;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
 import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -24,6 +30,9 @@ import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+
+
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
     //Activity Scope View/Object declaration
     TextView txtLight;
@@ -33,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float light; //simply holds the reported reading from the light sensor
     int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
     String light_Type;
+    String category; //category of the story that's going to be displayed in StoryActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +52,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         pbLight = findViewById(R.id.pbLight);
         checkPermissions();
         sensorInit();
+
+        //stories manager object is to organize all of the stories, categories, etc. into one class
+        StoriesManager storiesManager = new StoriesManager();
+
+        //use shared preferences to get the category of stories that the user needs right now
+        SharedPreferences pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
+        //for example, it is bright outside
+        category = pref.getString("bright", "dark");
+
+    }
+
+    public void launchSettings(View view) {
+        Intent intent = new Intent(this, Settings.class);
+        startActivity(intent);
+    }
+
+    public void launchStory(View view) {
+        Intent intent = new Intent(this, StoryActivity.class);
+        startActivity(intent);
+    }
+
+    public void shareApp(View view){
+        //this creates an implicit intent to share this app via a sms
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
+        intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
+        startActivity(intent);
+   
     }
 
     /**
