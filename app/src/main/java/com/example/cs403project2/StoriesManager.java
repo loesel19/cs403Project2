@@ -15,7 +15,7 @@ public class StoriesManager {
         storyCategories.add("Horror");
         storyCategories.add("Adventure");
         storyCategories.add("Poetry");
-        storyCategories.add("Something?");
+        storyCategories.add("Science Fiction");
     }
 
     public ArrayList<Story> getStories() {
@@ -32,7 +32,12 @@ public class StoriesManager {
 
     // Method for retrieving a random horror story
     public Story getHorrorStory() {
+        // Generate a random story within the appropriate genre
         int storyNumber = generateStory();
+
+        // Create a story item to be returned with the file name of the story, as well as the genre,
+        // title, and author of the story. This will be used to populate the text fields within the
+        // story activity.
         Story story = new Story();
         story.setFileName("horror" + storyNumber + ".txt");
         story.setCategory("Horror");
@@ -79,23 +84,74 @@ public class StoriesManager {
                 story.setAuthor("Anonymous");
                 break;
         }
-
         return story;
     }
 
     // Method for retrieving a random adventure story
-    public String getAdventureStory() {
-        return "Adventure";
+    public Story getAdventureStory() {
+        return new Story();
     }
 
     // Method for retrieving random poetry
-    public String getPoetryStory() {
-        return "Poetry";
+    public Story getPoetryStory() {
+        return new Story();
     }
 
-    // Method for retrieving a random something? story
-    public String getSomethingStory() {
-        return "Something?";
+    // Method for retrieving a random science fiction story
+    public Story getScienceFictionStory() {
+        // Generate a random story within the appropriate genre
+        int storyNumber = generateStory();
+
+        // Create a story item to be returned with the file name of the story, as well as the genre,
+        // title, and author of the story. This will be used to populate the text fields within the
+        // story activity.
+        Story story = new Story();
+        story.setFileName("sf" + storyNumber + ".txt");
+        story.setCategory("Science Fiction");
+
+        switch (storyNumber) {
+            case 0:
+                story.setTitle("Articulated Restraint");
+                story.setAuthor("Mary Robinette Kowal");
+                break;
+            case 1:
+                story.setTitle("Bloodchild");
+                story.setAuthor("Octavia Butler");
+                break;
+            case 2:
+                story.setTitle("Exhalation");
+                story.setAuthor("Ted Chiang");
+                break;
+            case 3:
+                story.setTitle("Homesick");
+                story.setAuthor("Sarah Gailey");
+                break;
+            case 4:
+                story.setTitle("In Xanadu");
+                story.setAuthor("Lavie Tidhar");
+                break;
+            case 5:
+                story.setTitle("Inventory");
+                story.setAuthor("Carmen Maria Machado");
+                break;
+            case 6:
+                story.setTitle("Mountain Ways");
+                story.setAuthor("Ursula K. Le Guin");
+                break;
+            case 7:
+                story.setTitle("Requiem Without Sound");
+                story.setAuthor("Izzy Wasserstein");
+                break;
+            case 8:
+                story.setTitle("The Effluent Engine");
+                story.setAuthor("N.K. Jemisin");
+                break;
+            case 9:
+                story.setTitle("The Fermi Paradox Is Our Business Model");
+                story.setAuthor("Charlie Jane Anders");
+                break;
+        }
+        return story;
     }
 
     // Generate a random number for choosing a story
