@@ -30,26 +30,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import androidx.core.content.ContextCompat;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+    final static String TAG1 = "light"; //light debug tag
+    final static String TAG2 = "weather";
+
+    boolean environmentType; //true is to retrieve a story based on light levels, false for weather
     String category; //category of the story that's going to be displayed in StoryActivity
 
-    String light_Type;
     LightSensorObject lightSensorObject; //our sensor event listener object
-    String TAG = "light"; //light debug tag
     String light_type; //the amount of light read by the light sensor
-    final static String TAG = "weather";
+
     private double lat;
     private double lon;
-    boolean environmentType; //true is to retrieve a story based on light levels, false for weather
     private String weather;
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -65,14 +63,27 @@ public class MainActivity extends AppCompatActivity {
         environmentType = pref.getBoolean("environ",false);
 
         if(environmentType){
+            /*
+            light type options:
+            dark
+            ambient
+            bright
+             */
             checkPermissions();
             lightSensorObject = new LightSensorObject();
-            category = pref.getString("bright", "dark");
+            light_type = lightSensorObject.getLight_Type();
+            category = pref.getString(light_type, "dark");
         }else {
+            /*
+            weather type options:
+            clear
+            overcast
+            rainy
+            snowy
+             */
             getWeatherByLocation();
             category = pref.getString(weather,"clear");
         }
-        //for example, it is bright outside
 
     }
 
@@ -84,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchStory(View view) {
         Intent intent = new Intent(this, StoryActivity.class);
+        /*
+        category types that can be retrieved:
+        horror
+        adventure
+        poetry
+        science fiction
+         */
         intent.putExtra("category",category);
         startActivity(intent);
     }
@@ -93,6 +111,91 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
         intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
         startActivity(intent);
+    }
+
+    private JsonObjectRequest requestObj(double lat, double lon){
+
+        String url =
+                "https://api.open-meteo.com/v1/forecast?" +
+                        "latitude="+lat+"&longitude="+lon+
+                        "&current_weather=true" +
+                        "&temperature_unit=fahrenheit" +
+                        "&windspeed_unit=mph" +
+                        "&precipitation_unit=inch";
+
+        JsonObjectRequest r = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            try {
+                JSONObject obj = response;
+                int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
+                setWeather(weatherID);
+                Log.d(TAG2,weather);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.d(TAG2,"Failed to get weather");
+        });
+
+        return r;
+    }
+
+    private void setWeather(int id){
+        int adjustedID;
+        if(id < 10){
+            adjustedID = id;
+        }else if(id == 85 || id == 86){
+            adjustedID = 7;
+        }else {
+            adjustedID = id/10;
+        }
+        switch(adjustedID){
+            case 3:
+            case 4:
+                weather = "overcast";
+                break;
+            case 5:
+            case 6:
+            case 8:
+            case 9:
+                weather = "rainy";
+                break;
+            case 7:
+                weather = "snowy";
+                break;
+            default:
+                weather = "clear";
+        }
+    }
+
+    private void getWeatherByLocation() {
+        //GPS Stuff
+
+        //Check for permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //If no, request the permission fro the user
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        } else {
+            //otherwise just note that permission was already granted
+            Log.d("gps", "getLocation: permissions granted");
+        }
+
+        //Gets last location from phone - exact isn't really necessary
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            //Set lat and lon values to the location lat and long
+                            lat = location.getLatitude();
+                            lon = location.getLongitude();
+                            Log.d("gps", "Latitude: " + lat + " Longitude: " + lon);
+                            //Add to api queue to get the weather from these coordinates
+                            RequestSingleton.getInstance(getApplicationContext()).addToRequestQueue(requestObj(lat, lon));
+                        }
+                    }
+                });
     }
       
        /**
@@ -138,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         lightSensorObject.sensorManager.registerListener(lightSensorObject,
                 lightSensorObject.sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
-
     }
 
     /**
@@ -149,13 +251,15 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         lightSensorObject.sensorManager.unregisterListener(lightSensorObject);
     }
-    class LightSensorObject implements SensorEventListener{
+
+    class LightSensorObject implements SensorEventListener {
         SensorManager sensorManager;
         Sensor sensor_light;
         float light; //simply holds the reported reading from the light sensor
         int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
         String light_Type;
-        public LightSensorObject(){
+
+        public LightSensorObject() {
             sensorInit();
         }
 
@@ -163,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
          * this is a simple method which gives handles to the sensor manager and the devices
          * light sensor.
          */
-        public void sensorInit(){
+        public void sensorInit() {
             sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             sensor_light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         }
@@ -172,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
          * override method for SensorEventListener
          * in this method we can grab the light value from the light sensor, and then
          * call a method to change our ui based on that value
+         *
          * @param event
          */
         @Override
@@ -190,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
          * this method gets the ratio of light to max_light_value and sets the light_Type
          * to a corresponding string.
          */
-        public void setLightType(){
+        public void setLightType() {
             double lightRatio = light / MAX_LIGHT_VALUE;
             if (lightRatio < 0.1)
                 light_Type = "dark";
@@ -202,108 +307,28 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * override method for SensorEventListener ... we do not care about this for our application
+         *
          * @param sensor
          * @param accuracy
          */
         @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy){
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
         }
+
         /**
          * getter methods for private instance variables
          */
-        public int getLight(){
+        public int getLight() {
             return (int) light;
         }
-        public int getMAX_LIGHT_VALUE(){
+
+        public int getMAX_LIGHT_VALUE() {
             return MAX_LIGHT_VALUE;
         }
-        public String getLight_Type(){
+
+        public String getLight_Type() {
             return light_Type;
         }
-
-    private JsonObjectRequest requestObj(double lat, double lon){
-
-        String url =
-                "https://api.open-meteo.com/v1/forecast?" +
-                "latitude="+lat+"&longitude="+lon+
-                "&current_weather=true" +
-                "&temperature_unit=fahrenheit" +
-                "&windspeed_unit=mph" +
-                "&precipitation_unit=inch";
-
-        JsonObjectRequest r = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-            try {
-                JSONObject obj = response;
-                int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
-                setWeather(weatherID);
-                Log.d(TAG,weather);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Log.d(TAG,"Failed to get weather");
-        });
-
-        return r;
-    }
-
-    private void setWeather(int id){
-        int adjustedID;
-        if(id < 10){
-            adjustedID = id;
-        }else if(id == 85 || id == 86){
-            adjustedID = 7;
-        }else {
-            adjustedID = id/10;
-        }
-        switch(adjustedID){
-            case 3:
-            case 4:
-                weather = "overcast";
-                break;
-            case 5:
-            case 6:
-            case 8:
-            case 9:
-                weather = "rainy";
-                break;
-            case 7:
-                weather = "snowy";
-                break;
-            default:
-                weather = "clear";
-        }
-    }
-
-    private void getWeatherByLocation(){
-        //GPS Stuff
-
-        //Check for permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //If no, request the permission fro the user
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        }
-        else {
-            //otherwise just note that permission was already granted
-            Log.d("gps", "getLocation: permissions granted");}
-
-        //Gets last location from phone - exact isn't really necessary
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY,null)
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            //Set lat and lon values to the location lat and long
-                            lat = location.getLatitude();
-                            lon = location.getLongitude();
-                            Log.d("gps", "Latitude: " + lat + " Longitude: " + lon);
-                            //Add to api queue to get the weather from these coordinates
-                            RequestSingleton.getInstance(getApplicationContext()).addToRequestQueue(requestObj(lat, lon));
-                        }
-                    }
-                });
     }
 }
