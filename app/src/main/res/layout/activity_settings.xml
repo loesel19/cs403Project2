@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings">
+
+    <TextView
+        android:id="@+id/lblOvercast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Overcast"
+        app:layout_constraintBottom_toBottomOf="@+id/spnOvercast"
+        app:layout_constraintStart_toStartOf="@+id/lblWeather"
+        app:layout_constraintTop_toTopOf="@+id/spnOvercast" />
+
+    <Spinner
+        android:id="@+id/spnOvercast"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/spnClear"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/spnClear"
+        app:layout_constraintTop_toBottomOf="@+id/spnClear" />
+
+    <TextView
+        android:id="@+id/lblSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Settings"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lblMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:text="Tell us what kind of weather puts you in the mood to read!"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblSettings" />
+
+    <TextView
+        android:id="@+id/lblLighting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Lighting Preferences"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/lblMessage"
+        app:layout_constraintTop_toBottomOf="@+id/lblMessage" />
+
+    <TextView
+        android:id="@+id/lblBright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bright"
+        app:layout_constraintBottom_toBottomOf="@+id/spnBright"
+        app:layout_constraintStart_toStartOf="@+id/lblLighting"
+        app:layout_constraintTop_toTopOf="@+id/spnBright" />
+
+    <Spinner
+        android:id="@+id/spnBright"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/spnDark"
+        app:layout_constraintStart_toStartOf="@+id/spnDark"
+        app:layout_constraintTop_toBottomOf="@+id/lblLighting" />
+
+    <TextView
+        android:id="@+id/lblDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dark"
+        app:layout_constraintBottom_toBottomOf="@+id/spnDark"
+        app:layout_constraintStart_toStartOf="@+id/lblLighting"
+        app:layout_constraintTop_toTopOf="@+id/spnDark" />
+
+    <Spinner
+        android:id="@+id/spnDark"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/spnClear"
+        app:layout_constraintStart_toStartOf="@+id/spnClear"
+        app:layout_constraintTop_toBottomOf="@+id/spnBright" />
+
+    <TextView
+        android:id="@+id/lblWeather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Weather Preferences"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/lblLighting"
+        app:layout_constraintTop_toBottomOf="@+id/spnDark" />
+
+    <TextView
+        android:id="@+id/lblClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        app:layout_constraintBottom_toBottomOf="@+id/spnClear"
+        app:layout_constraintStart_toStartOf="@+id/lblWeather"
+        app:layout_constraintTop_toTopOf="@+id/spnClear" />
+
+    <Spinner
+        android:id="@+id/spnClear"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/spnRainy"
+        app:layout_constraintStart_toStartOf="@+id/spnRainy"
+        app:layout_constraintTop_toBottomOf="@+id/lblWeather" />
+
+    <TextView
+        android:id="@+id/lblRainy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rainy"
+        app:layout_constraintBottom_toBottomOf="@+id/spnRainy"
+        app:layout_constraintStart_toStartOf="@+id/lblWeather"
+        app:layout_constraintTop_toTopOf="@+id/spnRainy" />
+
+    <Spinner
+        android:id="@+id/spnRainy"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/spnSnowy"
+        app:layout_constraintStart_toStartOf="@+id/spnSnowy"
+        app:layout_constraintTop_toBottomOf="@+id/spnOvercast" />
+
+    <TextView
+        android:id="@+id/lblSnowy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Snowy"
+        app:layout_constraintBottom_toBottomOf="@+id/spnSnowy"
+        app:layout_constraintStart_toStartOf="@+id/lblWeather"
+        app:layout_constraintTop_toTopOf="@+id/spnSnowy" />
+
+    <Spinner
+        android:id="@+id/spnSnowy"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/lblMessage"
+        app:layout_constraintStart_toEndOf="@+id/lblSnowy"
+        app:layout_constraintTop_toBottomOf="@+id/spnRainy" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:onClick="save"
+        android:text="Save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnSettingsBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="32dp"
+        android:onClick="back"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
