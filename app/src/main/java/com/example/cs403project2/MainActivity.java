@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG1 = "light"; //light debug tag
     final static String TAG2 = "weather";
 
+    SharedPreferences pref;
     boolean environmentType; //true is to retrieve a story based on light levels, false for weather
     String category; //category of the story that's going to be displayed in StoryActivity
 
@@ -58,13 +59,22 @@ public class MainActivity extends AppCompatActivity {
         //stories manager object is to organize all of the stories, categories, etc. into one class
         StoriesManager storiesManager = new StoriesManager();
 
-        //use shared preferences to get the category of stories that the user needs right now
-        SharedPreferences pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
-        environmentType = pref.getBoolean("environ",true);
-
         checkPermissions();
         lightSensorObject = new LightSensorObject();
 
+        //use shared preferences to get the category of stories that the user needs right now
+        pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
+        environmentType = pref.getBoolean("environ",false);
+
+    }
+
+
+    public void launchSettings(View view) {
+        Intent intent = new Intent(this, Settings.class);
+        startActivity(intent);
+    }
+
+    public void launchStory(View view) {
         if(environmentType){
             /*
             light type options:
@@ -73,8 +83,9 @@ public class MainActivity extends AppCompatActivity {
             bright
              */
             light_type = lightSensorObject.getLight_Type();
-            category = pref.getString(light_type, "dark");
+            Log.d(TAG1,lightSensorObject.getLight()+"");
             Log.d(TAG1,light_type+"");
+            category = pref.getString(light_type, "dark");
         }else {
             /*
             weather type options:
@@ -86,16 +97,6 @@ public class MainActivity extends AppCompatActivity {
             getWeatherByLocation();
             category = pref.getString(weather,"clear");
         }
-
-    }
-
-
-    public void launchSettings(View view) {
-        Intent intent = new Intent(this, Settings.class);
-        startActivity(intent);
-    }
-
-    public void launchStory(View view) {
         Intent intent = new Intent(this, StoryActivity.class);
         /*
         category types that can be retrieved:
