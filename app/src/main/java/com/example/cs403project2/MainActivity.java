@@ -60,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
         //use shared preferences to get the category of stories that the user needs right now
         SharedPreferences pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
-        environmentType = pref.getBoolean("environ",false);
+        environmentType = pref.getBoolean("environ",true);
+
+        checkPermissions();
+        lightSensorObject = new LightSensorObject();
 
         if(environmentType){
             /*
@@ -69,10 +72,9 @@ public class MainActivity extends AppCompatActivity {
             ambient
             bright
              */
-            checkPermissions();
-            lightSensorObject = new LightSensorObject();
             light_type = lightSensorObject.getLight_Type();
             category = pref.getString(light_type, "dark");
+            Log.d(TAG1,light_type+"");
         }else {
             /*
             weather type options:
