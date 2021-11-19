@@ -93,19 +93,19 @@ public class MainActivity extends AppCompatActivity {
         switch(adjustedID){
             case 3:
             case 4:
-                weather = "Overcast";
+                weather = "overcast";
                 break;
             case 5:
             case 6:
             case 8:
             case 9:
-                weather = "Rainy";
+                weather = "rainy";
                 break;
             case 7:
-                weather = "Snowy";
+                weather = "snowy";
                 break;
             default:
-                weather = "Clear";
+                weather = "clear";
         }
     }
 }
