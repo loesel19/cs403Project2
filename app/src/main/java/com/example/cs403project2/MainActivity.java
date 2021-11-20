@@ -11,6 +11,7 @@ package com.example.cs403project2;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,15 +21,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import androidx.core.content.ContextCompat;
+
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -64,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         //use shared preferences to get the category of stories that the user needs right now
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
-        environmentType = pref.getBoolean("environ",false);
+        environmentType = pref.getBoolean("environ", true);
 
     }
 
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchStory(View view) {
-        if(environmentType){
+        if (environmentType) {
             /*
             light type options:
             dark
@@ -83,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
             bright
              */
             light_type = lightSensorObject.getLight_Type();
-            Log.d(TAG1,lightSensorObject.getLight()+"");
-            Log.d(TAG1,light_type+"");
-            category = pref.getString(light_type, "dark");
-        }else {
+            Log.d(TAG1, lightSensorObject.getLight() + "");
+            Log.d(TAG1, light_type + "");
+            category = pref.getString(light_type, "random");
+        } else {
             /*
             weather type options:
             clear
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             snowy
              */
             getWeatherByLocation();
-            category = pref.getString(weather,"clear");
+            category = pref.getString(weather, "random");
         }
         Intent intent = new Intent(this, StoryActivity.class);
         /*
@@ -104,23 +109,24 @@ public class MainActivity extends AppCompatActivity {
         adventure
         poetry
         science fiction
+        random
          */
-        intent.putExtra("category",category);
+        intent.putExtra("category", category);
         startActivity(intent);
     }
 
-    public void shareApp(View view){
+    public void shareApp(View view) {
         //this creates an implicit intent to share this app via a sms
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
         intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
         startActivity(intent);
     }
 
-    private JsonObjectRequest requestObj(double lat, double lon){
+    private JsonObjectRequest requestObj(double lat, double lon) {
 
         String url =
                 "https://api.open-meteo.com/v1/forecast?" +
-                        "latitude="+lat+"&longitude="+lon+
+                        "latitude=" + lat + "&longitude=" + lon +
                         "&current_weather=true" +
                         "&temperature_unit=fahrenheit" +
                         "&windspeed_unit=mph" +
@@ -131,27 +137,27 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject obj = response;
                 int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
                 setWeather(weatherID);
-                Log.d(TAG2,weather);
+                Log.d(TAG2, weather);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Log.d(TAG2,"Failed to get weather");
+            Log.d(TAG2, "Failed to get weather");
         });
 
         return r;
     }
 
-    private void setWeather(int id){
+    private void setWeather(int id) {
         int adjustedID;
-        if(id < 10){
+        if (id < 10) {
             adjustedID = id;
-        }else if(id == 85 || id == 86){
+        } else if (id == 85 || id == 86) {
             adjustedID = 7;
-        }else {
-            adjustedID = id/10;
+        } else {
+            adjustedID = id / 10;
         }
-        switch(adjustedID){
+        switch (adjustedID) {
             case 3:
             case 4:
                 weather = "overcast";
@@ -172,16 +178,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void getWeatherByLocation() {
         //GPS Stuff
-
-        //Check for permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //If no, request the permission fro the user
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        } else {
-            //otherwise just note that permission was already granted
-            Log.d("gps", "getLocation: permissions granted");
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
-
         //Gets last location from phone - exact isn't really necessary
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null)
@@ -212,6 +214,15 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new
                     String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 1);
         }
+        //Check for permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //If no, request the permission fro the user
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        } else {
+            //otherwise just note that permission was already granted
+            Log.d("gps", "getLocation: permissions granted");
+        }
+
     }
 
 
@@ -284,14 +295,14 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         public void onSensorChanged(SensorEvent event) {
+            float[] currentValue = event.values;
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                light = event.values[0];
-
-                if (light > MAX_LIGHT_VALUE)
+                light = currentValue[0];
+                if (light > MAX_LIGHT_VALUE) {
                     light = MAX_LIGHT_VALUE;
-                setLightType();
-
+                }
             }
+            setLightType();
         }
 
         /**
