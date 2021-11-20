@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //stories manager object is to organize all of the stories, categories, etc. into one class
-        StoriesManager storiesManager = new StoriesManager();
 
         checkPermissions();
         lightSensorObject = new LightSensorObject();
@@ -71,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
         environmentType = pref.getBoolean("environ", true);
 
+        //determine the story category
+        chooseCategory();
     }
 
 
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void launchStory(View view) {
+    public void chooseCategory(){
         if (environmentType) {
             /*
             light type options:
@@ -102,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
             getWeatherByLocation();
             category = pref.getString(weather, "random");
         }
+    }
+
+    public void launchStory(View view) {
+        //chooses the story category first
+        //chooseCategory();
+        //and then sends you to the StoryActivity
         Intent intent = new Intent(this, StoryActivity.class);
         /*
         category types that can be retrieved:
@@ -198,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("gps", "Latitude: " + lat + " Longitude: " + lon);
                             //Add to api queue to get the weather from these coordinates
                             RequestSingleton.getInstance(getApplicationContext()).addToRequestQueue(requestObj(lat, lon));
+                        }
+                        else{
+                            Log.d(TAG2, "Could not get weather by location");
                         }
                     }
                 });
