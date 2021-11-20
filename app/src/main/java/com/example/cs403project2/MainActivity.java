@@ -1,7 +1,7 @@
 /**
  * Author: Andrew Loesel(aaloesel@svsu.edu), Adriana Kubicz, Kristina Mullen, Beata Hejno, Alexander Buckstiegel
  * Professor: Dr. Avishek Mukherjee
- * Class: CS 403, Mobile App Developement
+ * Class: CS 403, Mobile App Development
  * University: Saginaw Valley State University
  * ------------------------------------------
  * This Application will use a weather API and phones built in light sensor to display different

@@ -7,6 +7,34 @@
     tools:context=".Settings">
 
     <TextView
+        android:id="@+id/lblAmbient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ambient"
+        app:layout_constraintBottom_toBottomOf="@+id/spnAmbient"
+        app:layout_constraintStart_toStartOf="@+id/lblLighting"
+        app:layout_constraintTop_toTopOf="@+id/spnAmbient" />
+
+    <Spinner
+        android:id="@+id/spnAmbient"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/spnClear"
+        app:layout_constraintStart_toStartOf="@+id/spnClear"
+        app:layout_constraintTop_toBottomOf="@+id/spnBright" />
+
+    <TextView
+        android:id="@+id/lblWeather2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Which Preference should be used?"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/lblWeather"
+        app:layout_constraintTop_toBottomOf="@+id/spnSnowy" />
+
+    <TextView
         android:id="@+id/lblOvercast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +47,7 @@
         android:id="@+id/spnOvercast"
         android:layout_width="0dp"
         android:layout_height="35dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="@+id/spnClear"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/spnClear"
@@ -89,10 +117,10 @@
         android:id="@+id/spnDark"
         android:layout_width="0dp"
         android:layout_height="35dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="@+id/spnClear"
         app:layout_constraintStart_toStartOf="@+id/spnClear"
-        app:layout_constraintTop_toBottomOf="@+id/spnBright" />
+        app:layout_constraintTop_toBottomOf="@+id/spnAmbient" />
 
     <TextView
         android:id="@+id/lblWeather"
@@ -135,7 +163,7 @@
         android:id="@+id/spnRainy"
         android:layout_width="0dp"
         android:layout_height="35dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="@+id/spnSnowy"
         app:layout_constraintStart_toStartOf="@+id/spnSnowy"
         app:layout_constraintTop_toBottomOf="@+id/spnOvercast" />
@@ -154,7 +182,7 @@
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="@+id/lblMessage"
         app:layout_constraintStart_toEndOf="@+id/lblSnowy"
         app:layout_constraintTop_toBottomOf="@+id/spnRainy" />
@@ -180,5 +208,15 @@
         android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/switchEnviron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:checked="true"
+        android:text="Light"
+        app:layout_constraintStart_toStartOf="@+id/lblWeather2"
+        app:layout_constraintTop_toBottomOf="@+id/lblWeather2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
