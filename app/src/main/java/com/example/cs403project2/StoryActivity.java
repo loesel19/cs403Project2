@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 public class StoryActivity extends AppCompatActivity {
 
@@ -44,6 +46,7 @@ public class StoryActivity extends AppCompatActivity {
     public void displayStory(String category) throws IOException {
         // Create an empty story object
         Story story;
+        Log.d("storyDebug", category);
 
         // Call the appropriate method to get a random story
         switch (category) {
@@ -60,7 +63,8 @@ public class StoryActivity extends AppCompatActivity {
                 story = manager.getScienceFictionStory();
                 break;
             default:
-                story = new Story();
+                displayStory(getRandomStory());
+                return;
         }
 
         // Display the title and author of the story
@@ -81,6 +85,24 @@ public class StoryActivity extends AppCompatActivity {
             txtStory.setText(text);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public String getRandomStory() {
+        Random random = new Random();
+        int newStory = random.nextInt(4);
+
+        switch(newStory) {
+            case 0:
+                return "Horror";
+            case 1:
+                return "Adventure";
+            case 2:
+                return "Poetry";
+            case 3:
+                return "Science Fiction";
+            default:
+                return "";
         }
     }
 
