@@ -39,6 +39,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
@@ -62,15 +63,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        }
+
         checkPermissions();
         lightSensorObject = new LightSensorObject();
 
         //use shared preferences to get the category of stories that the user needs right now
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
         environmentType = pref.getBoolean("environ", true);
-
-        //determine the story category
-        chooseCategory();
     }
 
 
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchStory(View view) {
         //chooses the story category first
-        //chooseCategory();
+        chooseCategory();
         //and then sends you to the StoryActivity
         Intent intent = new Intent(this, StoryActivity.class);
         /*
@@ -122,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void shareApp(View view) {
+        //determine the story category
+        chooseCategory();
         //this creates an implicit intent to share this app via a sms
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
         intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
@@ -278,9 +282,9 @@ public class MainActivity extends AppCompatActivity {
     class LightSensorObject implements SensorEventListener {
         SensorManager sensorManager;
         Sensor sensor_light;
+        String light_Type;
         float light; //simply holds the reported reading from the light sensor
         int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
-        String light_Type;
 
         public LightSensorObject() {
             sensorInit();
@@ -320,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
          */
         public void setLightType() {
             double lightRatio = light / MAX_LIGHT_VALUE;
+
             if (lightRatio < 0.1)
                 light_Type = "dark";
             else if (lightRatio < 0.25)
