@@ -15,10 +15,14 @@ import java.util.Random;
 public class StoryActivity extends AppCompatActivity {
 
     StoriesManager manager;
+    String genre;
+    String sensorStatus;
 
     TextView txtTitle;
     TextView txtAuthor;
     TextView txtStory;
+    TextView txtSensor;
+    TextView txtCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +34,13 @@ public class StoryActivity extends AppCompatActivity {
         txtTitle = findViewById(R.id.txtTitle);
         txtAuthor = findViewById(R.id.txtAuthor);
         txtStory = findViewById(R.id.txtStory);
+        txtSensor = findViewById(R.id.txtSensor);
+        txtCategory = findViewById(R.id.txtCategory);
 
         // Populate with the genre for the present weather / light conditions
         Bundle bundle = getIntent().getExtras();
-        String genre = bundle.getString("category");
+        genre = bundle.getString("category");
+        sensorStatus = bundle.getString("sensor");
 
         try {
             // Generate and display a random story for the present genre
@@ -70,6 +77,8 @@ public class StoryActivity extends AppCompatActivity {
         // Display the title and author of the story
         txtTitle.setText(story.getTitle());
         txtAuthor.setText(story.getAuthor());
+        txtSensor.setText("Status: " + sensorStatus);
+        txtCategory.setText("Category: " + genre);
 
         try {
             // Use an input stream to convert a txt file into a byte
