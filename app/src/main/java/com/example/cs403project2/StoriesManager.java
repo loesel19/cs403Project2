@@ -16,6 +16,7 @@ public class StoriesManager {
         storyCategories.add("Adventure");
         storyCategories.add("Poetry");
         storyCategories.add("Science Fiction");
+        storyCategories.add("Random");
     }
 
     public ArrayList<Story> getStories() {
