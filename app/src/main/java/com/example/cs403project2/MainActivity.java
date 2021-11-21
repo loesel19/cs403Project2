@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
                 light = currentValue[0];
                 if (light > MAX_LIGHT_VALUE) {
-                    MAX_LIGHT_VALUE = (int) light;
+                    light = MAX_LIGHT_VALUE;
                 }
             }
             setLightType();
