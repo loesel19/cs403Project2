@@ -89,7 +89,59 @@ public class StoriesManager {
 
     // Method for retrieving a random adventure story
     public Story getAdventureStory() {
-        return new Story();
+        // Generate a random story within the appropriate genre
+        int storyNumber = generateStory();
+
+        // Create a story item to be returned with the file name of the story, as well as the genre,
+        // title, and author of the story. This will be used to populate the text fields within the
+        // story activity.
+        Story story = new Story();
+        story.setFileName("adv" + storyNumber + ".txt");
+        story.setCategory("Adventure");
+
+        switch (storyNumber) {
+            case 0:
+                story.setTitle("ALN23061912RK");
+                story.setAuthor("Cyndy Spice");
+                break;
+            case 1:
+                story.setTitle("Aloha Treasure");
+                story.setAuthor("Debbie Curtin");
+                break;
+            case 2:
+                story.setTitle("Dance to the End of Life");
+                story.setAuthor("Divya Narasimhan");
+                break;
+            case 3:
+                story.setTitle("Hindsight is a Wonderful Thing");
+                story.setAuthor("Alice Richardson");
+                break;
+            case 4:
+                story.setTitle("Mahalo King Cod Filet");
+                story.setAuthor("David Gottfried");
+                break;
+            case 5:
+                story.setTitle("Tales from the Ancient Forest");
+                story.setAuthor("Alex Lewig");
+                break;
+            case 6:
+                story.setTitle("The Collector");
+                story.setAuthor("Shane Ransom");
+                break;
+            case 7:
+                story.setTitle("The Last Train");
+                story.setAuthor("Marlee Brooks");
+                break;
+            case 8:
+                story.setTitle("The Tall Pine and the Pond");
+                story.setAuthor("Robyn Jackson");
+                break;
+            case 9:
+                story.setTitle("Unpaving Paradise");
+                story.setAuthor("Ruth Midgley");
+                break;
+        }
+        return story;
     }
 
     // Method for retrieving random poetry
