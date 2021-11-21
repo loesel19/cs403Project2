@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences pref;
     boolean environmentType; //true is to retrieve a story based on light levels, false for weather
     String category; //category of the story that's going to be displayed in StoryActivity
+    String status;
 
     LightSensorObject lightSensorObject; //our sensor event listener object
     String light_type; //the amount of light read by the light sensor
@@ -63,12 +64,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        }
-
         checkPermissions();
         lightSensorObject = new LightSensorObject();
+        getWeatherByLocation();
 
         //use shared preferences to get the category of stories that the user needs right now
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
@@ -81,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void chooseCategory(){
+    private void chooseCategory(){
         if (environmentType) {
             /*
             light type options:
@@ -92,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             light_type = lightSensorObject.getLight_Type();
             Log.d(TAG1, lightSensorObject.getLight() + "");
             Log.d(TAG1, light_type + "");
-            category = pref.getString(light_type, "random");
+            status = light_type;
         } else {
             /*
             weather type options:
@@ -101,9 +99,10 @@ public class MainActivity extends AppCompatActivity {
             rainy
             snowy
              */
-            getWeatherByLocation();
-            category = pref.getString(weather, "random");
+            Log.d(TAG2, weather);
+            status = weather;
         }
+        category = pref.getString(status, "Random");
     }
 
     public void launchStory(View view) {
@@ -120,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         random
          */
         intent.putExtra("category", category);
+        intent.putExtra("sensor",status);
         startActivity(intent);
     }
 
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         chooseCategory();
         //this creates an implicit intent to share this app via a sms
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
-        intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
+        intent.putExtra("sms_body", "Check out Transcribed Vibes! My category today is " + category + "!");
         startActivity(intent);
     }
 
@@ -147,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject obj = response;
                 int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
                 setWeather(weatherID);
-                Log.d(TAG2, weather);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -170,19 +169,19 @@ public class MainActivity extends AppCompatActivity {
         switch (adjustedID) {
             case 3:
             case 4:
-                weather = "overcast";
+                weather = "Overcast";
                 break;
             case 5:
             case 6:
             case 8:
             case 9:
-                weather = "rainy";
+                weather = "Rainy";
                 break;
             case 7:
-                weather = "snowy";
+                weather = "Snowy";
                 break;
             default:
-                weather = "clear";
+                weather = "Clear";
         }
     }
 
@@ -326,11 +325,11 @@ public class MainActivity extends AppCompatActivity {
             double lightRatio = light / MAX_LIGHT_VALUE;
 
             if (lightRatio < 0.1)
-                light_Type = "dark";
+                light_Type = "Dark";
             else if (lightRatio < 0.25)
-                light_Type = "ambient";
+                light_Type = "Ambient";
             else
-                light_Type = "bright";
+                light_Type = "Bright";
         }
 
         /**

@@ -4,19 +4,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 public class StoryActivity extends AppCompatActivity {
 
     StoriesManager manager;
+    String genre;
+    String sensorStatus;
 
     TextView txtTitle;
     TextView txtAuthor;
     TextView txtStory;
+    TextView txtSensor;
+    TextView txtCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +34,13 @@ public class StoryActivity extends AppCompatActivity {
         txtTitle = findViewById(R.id.txtTitle);
         txtAuthor = findViewById(R.id.txtAuthor);
         txtStory = findViewById(R.id.txtStory);
+        txtSensor = findViewById(R.id.txtSensor);
+        txtCategory = findViewById(R.id.txtCategory);
 
         // Populate with the genre for the present weather / light conditions
-        // *** hard-coded value for now ***
-        String genre = "Horror";
+        Bundle bundle = getIntent().getExtras();
+        genre = bundle.getString("category");
+        sensorStatus = bundle.getString("sensor");
 
         try {
             // Generate and display a random story for the present genre
@@ -44,6 +53,7 @@ public class StoryActivity extends AppCompatActivity {
     public void displayStory(String category) throws IOException {
         // Create an empty story object
         Story story;
+        Log.d("storyDebug", category);
 
         // Call the appropriate method to get a random story
         switch (category) {
@@ -60,12 +70,15 @@ public class StoryActivity extends AppCompatActivity {
                 story = manager.getScienceFictionStory();
                 break;
             default:
-                story = new Story();
+                displayStory(getRandomStory());
+                return;
         }
 
         // Display the title and author of the story
         txtTitle.setText(story.getTitle());
         txtAuthor.setText(story.getAuthor());
+        txtSensor.setText("Status: " + sensorStatus);
+        txtCategory.setText("Category: " + genre);
 
         try {
             // Use an input stream to convert a txt file into a byte
@@ -81,6 +94,24 @@ public class StoryActivity extends AppCompatActivity {
             txtStory.setText(text);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public String getRandomStory() {
+        Random random = new Random();
+        int newStory = random.nextInt(4);
+
+        switch(newStory) {
+            case 0:
+                return "Horror";
+            case 1:
+                return "Adventure";
+            case 2:
+                return "Poetry";
+            case 3:
+                return "Science Fiction";
+            default:
+                return "";
         }
     }
 

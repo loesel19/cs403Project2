@@ -48,20 +48,20 @@ public class Settings extends AppCompatActivity {
         //use shared preferences if available
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
         //for that, get the positions of the categories we will set
-        int bright = adapter.getPosition(pref.getString("bright", "Adventure"));
+        int bright = adapter.getPosition(pref.getString("Bright", "Adventure"));
         //set default values to the spinners,
         spnBright.setSelection(bright);
-        int dark = adapter.getPosition(pref.getString("dark", "Horror"));
+        int dark = adapter.getPosition(pref.getString("Dark", "Horror"));
         spnDark.setSelection(dark);
-        int clear = adapter.getPosition(pref.getString("clear", "Adventure"));
+        int clear = adapter.getPosition(pref.getString("Clear", "Adventure"));
         spnClear.setSelection(clear);
-        int overcast = adapter.getPosition(pref.getString("overcast", "Science Fiction"));
+        int overcast = adapter.getPosition(pref.getString("Overcast", "Science Fiction"));
         spnOvercast.setSelection(overcast);
-        int rainy = adapter.getPosition(pref.getString("rainy", "Poetry"));
+        int rainy = adapter.getPosition(pref.getString("Rainy", "Poetry"));
         spnRainy.setSelection(rainy);
-        int snowy = adapter.getPosition(pref.getString("snowy", "Poetry"));
+        int snowy = adapter.getPosition(pref.getString("Snowy", "Poetry"));
         spnSnowy.setSelection(snowy);
-        int ambient = adapter.getPosition(pref.getString("ambient", "Science Fiction"));
+        int ambient = adapter.getPosition(pref.getString("Ambient", "Science Fiction"));
         spnAmbient.setSelection(ambient);
         //and to the switch
         boolean isLight = pref.getBoolean("environ", true);
@@ -82,13 +82,13 @@ public class Settings extends AppCompatActivity {
     public void save(View view) {
         //save all of the selections in shared preferences
         SharedPreferences.Editor prefEditor = pref.edit();
-        prefEditor.putString("bright", spnBright.getSelectedItem().toString());
-        prefEditor.putString("dark", spnDark.getSelectedItem().toString());
-        prefEditor.putString("clear", spnClear.getSelectedItem().toString());
-        prefEditor.putString("overcast", spnOvercast.getSelectedItem().toString());
-        prefEditor.putString("rainy", spnRainy.getSelectedItem().toString());
-        prefEditor.putString("snowy", spnSnowy.getSelectedItem().toString());
-        prefEditor.putString("ambient", spnAmbient.getSelectedItem().toString());
+        prefEditor.putString("Bright", spnBright.getSelectedItem().toString());
+        prefEditor.putString("Dark", spnDark.getSelectedItem().toString());
+        prefEditor.putString("Clear", spnClear.getSelectedItem().toString());
+        prefEditor.putString("Overcast", spnOvercast.getSelectedItem().toString());
+        prefEditor.putString("Rainy", spnRainy.getSelectedItem().toString());
+        prefEditor.putString("Snowy", spnSnowy.getSelectedItem().toString());
+        prefEditor.putString("Ambient", spnAmbient.getSelectedItem().toString());
         prefEditor.putBoolean("environ", switchEnviron.isChecked());
         prefEditor.commit();
         //return to main
