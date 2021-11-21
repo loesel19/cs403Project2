@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        } else {
-            Toast.makeText(this, "You won't be able to get a story based on weather! :(", Toast.LENGTH_SHORT).show();
         }
 
         checkPermissions();
@@ -75,9 +73,6 @@ public class MainActivity extends AppCompatActivity {
         //use shared preferences to get the category of stories that the user needs right now
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
         environmentType = pref.getBoolean("environ", true);
-
-        //determine the story category
-        chooseCategory();
     }
 
 
@@ -88,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void chooseCategory(){
         if (environmentType) {
-            Log.d("Beata", "Choosing category for light");
             /*
             light type options:
             dark
@@ -100,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG1, light_type + "");
             category = pref.getString(light_type, "random");
         } else {
-            Log.d("Beata", "Choosing category for weather");
             /*
             weather type options:
             clear
@@ -111,12 +104,11 @@ public class MainActivity extends AppCompatActivity {
             getWeatherByLocation();
             category = pref.getString(weather, "random");
         }
-        Log.d("Beata", "Choosed category "+category);
     }
 
     public void launchStory(View view) {
         //chooses the story category first
-        //chooseCategory();
+        chooseCategory();
         //and then sends you to the StoryActivity
         Intent intent = new Intent(this, StoryActivity.class);
         /*
@@ -132,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void shareApp(View view) {
+        //determine the story category
+        chooseCategory();
         //this creates an implicit intent to share this app via a sms
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "", null));
         intent.putExtra("sms_body", "Check out Transcribed Vibes! The story for today is " + category + "!");
@@ -154,14 +148,11 @@ public class MainActivity extends AppCompatActivity {
                 int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
                 setWeather(weatherID);
                 Log.d(TAG2, weather);
-                Log.d("Beata", "current weather "+weather);
             } catch (JSONException e) {
-                Log.d("Beata", "Oooof");
                 e.printStackTrace();
             }
         }, error -> {
             Log.d(TAG2, "Failed to get weather");
-            Log.d("Beata", "Failed to get weather");
         });
 
         return r;
@@ -201,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("Beata", "Weather perm not granted");
             return;
         }
         //Gets last location from phone - exact isn't really necessary
@@ -218,11 +208,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("gps", "Latitude: " + lat + " Longitude: " + lon);
                             //Add to api queue to get the weather from these coordinates
                             RequestSingleton.getInstance(getApplicationContext()).addToRequestQueue(requestObj(lat, lon));
-                            Log.d("Beata", "Latitude: "+lat);
                         }
                         else{
                             Log.d(TAG2, "Could not get weather by location");
-                            Log.d("Beata", "Could not get weather by location");
                         }
                     }
                 });
@@ -280,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         lightSensorObject.sensorManager.registerListener(lightSensorObject,
                 lightSensorObject.sensor_light,SensorManager.SENSOR_DELAY_NORMAL);
-        Log.d("Beata", "Light onStart");
     }
 
     /**
@@ -295,9 +282,9 @@ public class MainActivity extends AppCompatActivity {
     class LightSensorObject implements SensorEventListener {
         SensorManager sensorManager;
         Sensor sensor_light;
+        String light_Type;
         float light; //simply holds the reported reading from the light sensor
         int MAX_LIGHT_VALUE = 500; //cap for actionable range of light value (0-this val)
-        String light_Type;
 
         public LightSensorObject() {
             sensorInit();
@@ -325,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
                 light = currentValue[0];
                 if (light > MAX_LIGHT_VALUE) {
-                    light = MAX_LIGHT_VALUE;
+                    MAX_LIGHT_VALUE = (int) light;
                 }
             }
             setLightType();
@@ -337,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
          */
         public void setLightType() {
             double lightRatio = light / MAX_LIGHT_VALUE;
+
             if (lightRatio < 0.1)
                 light_Type = "dark";
             else if (lightRatio < 0.25)
