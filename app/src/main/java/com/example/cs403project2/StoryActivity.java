@@ -30,8 +30,8 @@ public class StoryActivity extends AppCompatActivity {
         txtStory = findViewById(R.id.txtStory);
 
         // Populate with the genre for the present weather / light conditions
-        // *** hard-coded value for now ***
-        String genre = "Horror";
+        Bundle bundle = getIntent().getExtras();
+        String genre = bundle.getString("category");
 
         try {
             // Generate and display a random story for the present genre

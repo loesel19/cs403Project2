@@ -23,10 +23,6 @@ public class StoriesManager {
         return stories;
     }
 
-    public void addStory(){
-
-    }
-
     public ArrayList<String> getStoryCategories() {
         return storyCategories;
     }
@@ -147,7 +143,59 @@ public class StoriesManager {
 
     // Method for retrieving random poetry
     public Story getPoetryStory() {
-        return new Story();
+        // Generate a random story within the appropriate genre
+        int storyNumber = generateStory();
+
+        // Create a story item to be returned with the file name of the story, as well as the genre,
+        // title, and author of the story. This will be used to populate the text fields within the
+        // story activity.
+        Story story = new Story();
+        story.setFileName("poetry" + storyNumber + ".txt");
+        story.setCategory("Poetry");
+
+        switch (storyNumber) {
+            case 0:
+                story.setTitle("Are We Fear");
+                story.setAuthor("Melissa Broder");
+                break;
+            case 1:
+                story.setTitle("Bird-Understander");
+                story.setAuthor("Craig Arnold");
+                break;
+            case 2:
+                story.setTitle("Easily Written Poem");
+                story.setAuthor("Yun Dong-ju");
+                break;
+            case 3:
+                story.setTitle("Parallel Movement of the Hands");
+                story.setAuthor("John Ashbery");
+                break;
+            case 4:
+                story.setTitle("The Sun Rising");
+                story.setAuthor("John Donne");
+                break;
+            case 5:
+                story.setTitle("Three Grapes");
+                story.setAuthor("Giovanni Pascoli");
+                break;
+            case 6:
+                story.setTitle("Voiceover");
+                story.setAuthor("Rita Dove");
+                break;
+            case 7:
+                story.setTitle("Waiting for the Heat to Break into Rain");
+                story.setAuthor("Michael McGriff");
+                break;
+            case 8:
+                story.setTitle("Winter Recipes from the Collective");
+                story.setAuthor("Louise Glück");
+                break;
+            case 9:
+                story.setTitle("You");
+                story.setAuthor("Rafael Cadenas");
+                break;
+        }
+        return story;
     }
 
     // Method for retrieving a random science fiction story
