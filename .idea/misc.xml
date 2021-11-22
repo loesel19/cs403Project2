@@ -4,15 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Alex/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_main.xml" value="0.334375" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_story.xml" value="0.2942708333333333" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/cs403Project2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3104166666666667" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/cs403Project2/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3104166666666667" />
         <entry key="..\:/Users/Beata/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Beata/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_settings.xml" value="0.5" />
+        <entry key="..\:/Users/Beata/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_settings.xml" value="0.2833333333333333" />
         <entry key="..\:/Users/Beata/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_story.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/demon/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_main.xml" value="0.23125" />
-        <entry key="..\:/Users/demon/AndroidStudioProjects/cs403Project2/app/src/main/res/layout/activity_story.xml" value="0.23125" />
-        <entry key="..\:/Users/demon/AndroidStudioProjects/cs403Project2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22135416666666666" />
-        <entry key="..\:/Users/demon/AndroidStudioProjects/cs403Project2/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.12407407407407407" />
-        <entry key="..\:/cs403Project2/app/src/main/res/layout/activity_story.xml" value="0.36666666666666664" />
-        <entry key="..\:/cs403Project2/app/src/main/res/layout/story_layout.xml" value="0.35260416666666666" />
       </map>
     </option>
   </component>
