@@ -9,6 +9,7 @@
  */
 package com.example.cs403project2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -19,15 +20,22 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             rainy
             snowy
              */
-            Log.d(TAG2, weather);
+            Log.d(TAG2, weather + "");
             status = weather;
         }
         category = pref.getString(status, "Random");
@@ -146,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject obj = response;
                 int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
+                Log.d(TAG2, "got weatherID");
                 setWeather(weatherID);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -183,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 weather = "Clear";
         }
+        Log.d(TAG2,"Set the weather");
     }
 
     private void getWeatherByLocation() {
@@ -193,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         //Gets last location from phone - exact isn't really necessary
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null)
@@ -200,19 +211,23 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
+                        if (!location.equals(null)) {
                             //Set lat and lon values to the location lat and long
                             lat = location.getLatitude();
                             lon = location.getLongitude();
-                            Log.d("gps", "Latitude: " + lat + " Longitude: " + lon);
-                            //Add to api queue to get the weather from these coordinates
-                            RequestSingleton.getInstance(getApplicationContext()).addToRequestQueue(requestObj(lat, lon));
-                        }
-                        else{
+                            Log.d(TAG2, "Latitude: " + lat + " Longitude: " + lon);
+                        } else {
                             Log.d(TAG2, "Could not get weather by location");
                         }
                     }
-                });
+                }).addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                //Add to api queue to get the weather from these coordinates
+                Log.d(TAG2, "Before req: Latitude: " + lat + " Longitude: " + lon);
+                RequestSingleton.getInstance(getApplicationContext()).addToRequestQueue(requestObj(lat, lon));
+            }
+        });
     }
       
        /**
@@ -220,21 +235,18 @@ public class MainActivity extends AppCompatActivity {
      */
     public void checkPermissions(){
         if(ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACTIVITY_RECOGNITION) ==
-                PackageManager.PERMISSION_DENIED){
+                Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED
+                && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
 //ask for permission
             requestPermissions(new
-                    String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 1);
-        }
-        //Check for permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //If no, request the permission fro the user
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        } else {
+                    String[]{Manifest.permission.ACTIVITY_RECOGNITION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }else {
             //otherwise just note that permission was already granted
-            Log.d("gps", "getLocation: permissions granted");
+            Log.d("perm", "permissions granted");
         }
-
     }
 
 
