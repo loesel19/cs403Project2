@@ -61,7 +61,7 @@ public class StoriesManager {
                 story.setAuthor("Anonymous");
                 break;
             case 5:
-                story.setTitle("Smile Dog");
+                story.setTitle("Laughing Jack");
                 story.setAuthor("Anonymous");
                 break;
             case 6:
