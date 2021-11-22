@@ -72,16 +72,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkPermissions();
+        checkPermissions(); //check for permissions for location and light
         lightSensorObject = new LightSensorObject();
-        getWeatherByLocation();
+        getWeatherByLocation(); //get the weather
 
         //use shared preferences to get the category of stories that the user needs right now
         pref = getSharedPreferences("StoriesSP", MODE_PRIVATE);
         environmentType = pref.getBoolean("environ", true);
     }
 
-
+    //go to the settings page
     public void launchSettings(View view) {
         Intent intent = new Intent(this, Settings.class);
         startActivity(intent);
@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
     private JsonObjectRequest requestObj(double lat, double lon) {
 
+        //open-meteo API, free for open source non-commercial use
         String url =
                 "https://api.open-meteo.com/v1/forecast?" +
                         "latitude=" + lat + "&longitude=" + lon +
@@ -153,9 +154,10 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest r = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
                 JSONObject obj = response;
+                //uses their current weather feature, and just gets the weather code
                 int weatherID = obj.getJSONObject("current_weather").getInt("weathercode");
                 Log.d(TAG2, "got weatherID");
-                setWeather(weatherID);
+                setWeather(weatherID); //sets the weather based on the code received
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -167,29 +169,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setWeather(int id) {
+        //there are many codes,
+        // so for simplicity narrowed potential results to those relevant for this app
         int adjustedID;
-        if (id < 10) {
+        if (id < 10) { //if the code is under 10 keep it
             adjustedID = id;
-        } else if (id == 85 || id == 86) {
-            adjustedID = 7;
+        } else if (id == 85 || id == 86) { //if code calls for snow showers
+            adjustedID = 7; //70's are the codes for the other snow events, so change to snow event
         } else {
-            adjustedID = id / 10;
+            adjustedID = id / 10; //all other available event codes were separated by 10's
         }
         switch (adjustedID) {
-            case 3:
-            case 4:
+            case 3: //3 overcase
+            case 4: //fog
                 weather = "Overcast";
                 break;
-            case 5:
-            case 6:
-            case 8:
-            case 9:
+            case 5: //51, 53, 55 levels of drizzle 56, 57 freezing drizzle
+            case 6: //61,63,65 levels of rain
+            case 8: //80,81,82 levels of rain showers
+            case 9: //95,96,99 thunderstorms
                 weather = "Rainy";
                 break;
-            case 7:
+            case 7: //71,73,75,77 levels of snow 85,86 snow showers
                 weather = "Snowy";
                 break;
             default:
+                //0 clear sky
+                //1 mainly clear
+                //2 partly cloudy
                 weather = "Clear";
         }
         Log.d(TAG2,"Set the weather");
